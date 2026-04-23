@@ -16,11 +16,11 @@ import Header from './components/Header'
 import NavBar from './components/NavBar'
 import SearchInput from './components/SearchInput'
 import ArticleInfo from './components/ArticleInfo'
+import ArticleShareBar from './components/ArticleShareBar'
+import ArticleCommentSection from './components/ArticleCommentSection'
 import CONFIG from './config'
 import { Style } from './style'
 
-const Comment = dynamic(() => import('@/components/Comment'), { ssr: false })
-const ShareBar = dynamic(() => import('@/components/ShareBar'), { ssr: false })
 const ArticleAround = dynamic(() => import('./components/ArticleAround'), {
   ssr: false
 })
@@ -473,9 +473,7 @@ function LayoutSlug(props) {
               <NotionPage post={post} />
             </div>
 
-            <div className='mt-10'>
-              <ShareBar post={post} />
-            </div>
+            <ArticleShareBar post={post} />
 
             {post?.type === 'Post' && (
               <>
@@ -484,7 +482,7 @@ function LayoutSlug(props) {
               </>
             )}
 
-            <Comment frontMatter={post} />
+            <ArticleCommentSection post={post} />
           </div>
 
           <aside className='hidden xl:block xl:sticky xl:top-28'>

@@ -236,7 +236,7 @@ const Style = () => {
       border-radius: 24px;
       border: 1px solid rgba(17, 24, 39, 0.08);
       background: #0b1120;
-      padding: 1.1rem 1.2rem;
+      padding: 3.15rem 1.2rem 1.1rem;
       color: #e5e7eb;
       box-shadow: 0 18px 50px rgba(2, 6, 23, 0.18);
     }
@@ -267,6 +267,73 @@ const Style = () => {
     .dark #theme-ybot .ybot-prose .notion-bookmark {
       border-color: rgba(255, 255, 255, 0.08);
       background: rgba(255, 255, 255, 0.04);
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar {
+      position: relative;
+      margin: 1.5rem 0;
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar > .toolbar {
+      position: absolute;
+      top: 0.95rem;
+      right: 1rem;
+      opacity: 1;
+      z-index: 3;
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar > .toolbar .toolbar-item {
+      display: inline-flex;
+      margin-left: 0.45rem;
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar > .toolbar .toolbar-item > button,
+    #theme-ybot .ybot-prose .code-toolbar > .toolbar .toolbar-item > a,
+    #theme-ybot .ybot-prose .code-toolbar > .toolbar .toolbar-item > span {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.35rem 0.7rem;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #e5e7eb;
+      box-shadow: none;
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar > .toolbar .toolbar-item > button:hover,
+    #theme-ybot .ybot-prose .code-toolbar > .toolbar .toolbar-item > a:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar .pre-mac {
+      position: absolute;
+      top: 1.05rem;
+      left: 1rem;
+      z-index: 2;
+      display: flex;
+      gap: 0.45rem;
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar .pre-mac span {
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar .pre-mac span:nth-child(1) {
+      background: #fb7185;
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar .pre-mac span:nth-child(2) {
+      background: #f59e0b;
+    }
+
+    #theme-ybot .ybot-prose .code-toolbar .pre-mac span:nth-child(3) {
+      background: #22c55e;
     }
 
     #theme-ybot .ybot-prose .notion-hr {
@@ -310,6 +377,71 @@ const Style = () => {
     .dark #theme-ybot .ybot-nav-link[aria-current='page'] {
       background: rgba(255, 255, 255, 0.9);
       color: #0b1120 !important;
+    }
+
+    #theme-ybot .ybot-prose .line-numbers .line-numbers-rows {
+      top: 3.05rem;
+      border-right-color: rgba(255, 255, 255, 0.08);
+    }
+
+    #theme-ybot .ybot-prose .line-numbers-rows > span:before {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    #theme-ybot .ybot-share-shell .mx-1,
+    #theme-ybot .ybot-share-shell .react-share__ShareButton {
+      margin: 0 !important;
+    }
+
+    #theme-ybot .ybot-share-shell button,
+    #theme-ybot .ybot-share-shell .social-share-button {
+      transition: transform 180ms ease, filter 180ms ease;
+    }
+
+    #theme-ybot .ybot-share-shell button:hover,
+    #theme-ybot .ybot-share-shell .social-share-button:hover {
+      transform: translateY(-2px);
+      filter: saturate(1.05);
+    }
+
+    #theme-ybot .ybot-comment-shell .comment {
+      margin-top: 0 !important;
+      color: var(--ybot-foreground);
+    }
+
+    .dark #theme-ybot .ybot-comment-shell .comment {
+      color: #e5e7eb;
+    }
+
+    #theme-ybot .ybot-comment-shell ul {
+      display: flex;
+      justify-content: flex-start;
+      gap: 0.7rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+
+    #theme-ybot .ybot-comment-shell li {
+      white-space: nowrap;
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+    }
+
+    .dark #theme-ybot .ybot-comment-shell li {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    #theme-ybot .ybot-comment-shell li.font-black {
+      border-color: var(--ybot-accent) !important;
+      background: rgba(61, 99, 255, 0.08);
+      color: var(--ybot-accent-strong) !important;
+      animation: none;
+    }
+
+    #theme-ybot .ybot-comment-shell .text-center {
+      padding: 2rem 0;
+      color: var(--ybot-muted);
     }
 
     @media (max-width: 768px) {
