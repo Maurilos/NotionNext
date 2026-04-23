@@ -3,6 +3,7 @@ import { useGlobal } from '@/lib/global'
 import throttle from 'lodash.throttle'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BlogItem } from './BlogItem'
+import EmptyState from './EmptyState'
 
 export default function BlogListScroll(props) {
   const { posts } = props
@@ -40,6 +41,20 @@ export default function BlogListScroll(props) {
       scrollTrigger.cancel?.()
     }
   }, [scrollTrigger])
+
+  if (!posts?.length) {
+    return (
+      <EmptyState
+        eyebrow='Empty Listing'
+        title='这里暂时没有内容。'
+        description='可以换个关键词、回归档页，或者先从首页继续往下看。'
+        primaryHref='/search'
+        primaryLabel='重新搜索'
+        secondaryHref='/'
+        secondaryLabel='回到首页'
+      />
+    )
+  }
 
   return (
     <div id='posts-wrapper' className='mb-12 w-full' ref={targetRef}>

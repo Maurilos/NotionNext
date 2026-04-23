@@ -12,6 +12,7 @@ import BlogListScroll from './components/BlogListScroll'
 import BlogPostBar from './components/BlogPostBar'
 import Catalog from './components/Catalog'
 import Footer from './components/Footer'
+import EmptyState from './components/EmptyState'
 import Header from './components/Header'
 import NavBar from './components/NavBar'
 import SearchInput from './components/SearchInput'
@@ -503,18 +504,38 @@ function LayoutCategoryIndex(props) {
         <SectionHeading
           eyebrow='Category Index'
           title='分类目录'
-          description='按分类浏览站点里的全部内容。'
+          description='按主题把内容整理成清楚的入口，先看全貌，再决定往哪条线继续读。'
         />
-        <div className='flex flex-wrap gap-3'>
-          {categoryOptions.map(category => (
-            <SmartLink
-              key={category.name}
-              href={`/category/${category.name}`}
-              className='rounded-full border border-black/10 px-4 py-2 text-sm text-[var(--ybot-foreground)] transition hover:border-[var(--ybot-accent)] hover:text-[var(--ybot-accent-strong)] dark:border-white/10 dark:text-white/80'>
-              {category.name} ({category.count})
-            </SmartLink>
-          ))}
-        </div>
+        {categoryOptions.length ? (
+          <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
+            {categoryOptions.map(category => (
+              <SmartLink
+                key={category.name}
+                href={`/category/${category.name}`}
+                className='group rounded-[24px] border border-black/8 bg-white/56 p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[var(--ybot-accent)] hover:shadow-[0_18px_40px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/[0.03]'>
+                <p className='text-xs font-semibold uppercase tracking-[0.24em] text-[var(--ybot-muted)] dark:text-white/45'>
+                  Category
+                </p>
+                <h3 className='ybot-display mt-4 text-3xl tracking-[-0.04em] text-[var(--ybot-foreground)] transition group-hover:text-[var(--ybot-accent-strong)] dark:text-white'>
+                  {category.name}
+                </h3>
+                <p className='mt-4 text-sm leading-7 text-[var(--ybot-muted)] dark:text-white/64'>
+                  这一类下共 {category.count} 篇内容，适合按主题连续阅读。
+                </p>
+              </SmartLink>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            eyebrow='Category Index'
+            title='还没有分类内容。'
+            description='分类目录会在内容积累后慢慢丰满起来，现在先从首页或归档继续看。'
+            primaryHref='/'
+            primaryLabel='回到首页'
+            secondaryHref='/archive'
+            secondaryLabel='去归档'
+          />
+        )}
       </div>
     </div>
   )
@@ -529,19 +550,38 @@ function LayoutTagIndex(props) {
         <SectionHeading
           eyebrow='Tag Index'
           title='标签目录'
-          description='按标签快速定位相关文章。'
+          description='标签更像细颗粒度的索引，用来横向串起相关主题。'
         />
-        <div className='flex flex-wrap gap-3'>
-          {tagOptions.map(tag => (
-            <SmartLink
-              key={tag.name}
-              href={`/tag/${encodeURIComponent(tag.name)}`}
-              className='rounded-full border border-black/10 px-4 py-2 text-sm text-[var(--ybot-foreground)] transition hover:border-[var(--ybot-accent)] hover:text-[var(--ybot-accent-strong)] dark:border-white/10 dark:text-white/80'>
-              #{tag.name}
-              {tag.count ? ` (${tag.count})` : ''}
-            </SmartLink>
-          ))}
-        </div>
+        {tagOptions.length ? (
+          <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
+            {tagOptions.map(tag => (
+              <SmartLink
+                key={tag.name}
+                href={`/tag/${encodeURIComponent(tag.name)}`}
+                className='group rounded-[22px] border border-black/8 bg-white/56 px-5 py-5 text-[var(--ybot-foreground)] transition duration-300 hover:-translate-y-0.5 hover:border-[var(--ybot-accent)] hover:shadow-[0_18px_40px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/[0.03] dark:text-white/80'>
+                <p className='text-xs font-semibold uppercase tracking-[0.24em] text-[var(--ybot-muted)] dark:text-white/45'>
+                  Tag
+                </p>
+                <h3 className='mt-3 text-lg font-semibold tracking-[-0.02em] transition group-hover:text-[var(--ybot-accent-strong)]'>
+                  #{tag.name}
+                </h3>
+                <p className='mt-3 text-sm text-[var(--ybot-muted)] dark:text-white/55'>
+                  {tag.count ? `${tag.count} 篇内容` : '查看相关内容'}
+                </p>
+              </SmartLink>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            eyebrow='Tag Index'
+            title='标签还没铺开。'
+            description='等内容和结构更丰满，这里会成为非常好用的横向索引入口。'
+            primaryHref='/'
+            primaryLabel='回到首页'
+            secondaryHref='/search'
+            secondaryLabel='去搜索'
+          />
+        )}
       </div>
     </div>
   )
@@ -576,6 +616,9 @@ function Layout404() {
             </SmartLink>
             <SmartLink href='/tag' className='block rounded-2xl border border-white/10 px-4 py-4 transition hover:bg-white/6 hover:text-white'>
               标签目录
+            </SmartLink>
+            <SmartLink href='/search' className='block rounded-2xl border border-white/10 px-4 py-4 transition hover:bg-white/6 hover:text-white'>
+              站内搜索
             </SmartLink>
           </div>
         </div>

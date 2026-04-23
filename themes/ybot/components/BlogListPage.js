@@ -5,6 +5,7 @@ import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
 import CONFIG from '../config'
 import { BlogItem } from './BlogItem'
+import EmptyState from './EmptyState'
 
 export default function BlogListPage(props) {
   const { page = 1, posts, postCount } = props
@@ -31,6 +32,20 @@ export default function BlogListPage(props) {
   const nextHref = {
     pathname: `${pagePrefix}/page/${currentPage + 1}`,
     query: router.query.s ? { s: router.query.s } : {}
+  }
+
+  if (!posts?.length) {
+    return (
+      <EmptyState
+        eyebrow='Empty Listing'
+        title='当前筛选下还没有文章。'
+        description='搜索结果、分类页或标签页如果暂时没有命中内容，就先给一个干净的落点，不要让页面空着。'
+        primaryHref='/search'
+        primaryLabel='重新搜索'
+        secondaryHref='/archive'
+        secondaryLabel='查看归档'
+      />
+    )
   }
 
   return (
