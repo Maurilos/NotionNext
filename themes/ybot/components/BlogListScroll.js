@@ -1,69 +1,63 @@
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import throttle from 'lodash.throttle'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BlogItem } from './BlogItem'
 
-/**
- * 滚动博客列表
- * @param {*} props
- * @returns
- */
 export default function BlogListScroll(props) {
   const { posts } = props
   const { locale, NOTION_CONFIG } = useGlobal()
   const [page, updatePage] = useState(1)
   const POSTS_PER_PAGE = siteConfig('POSTS_PER_PAGE', null, NOTION_CONFIG)
-  let hasMore = false
-  const postsToShow = posts
-    ? Object.assign(posts).slice(0, POSTS_PER_PAGE * page)
-    : []
-
-  if (posts) {
-    const totalCount = posts.length
-    hasMore = page * POSTS_PER_PAGE < totalCount
-  }
-  const handleGetMore = () => {
-    if (!hasMore) return
-    updatePage(page + 1)
-  }
-
   const targetRef = useRef(null)
 
-  // 监听滚动自动分页加载
+  const totalCount = posts?.length || 0
+  const hasMore = page * POSTS_PER_PAGE < totalCount
+  const postsToShow = useMemo(() => {
+    return posts ? [...posts].slice(0, POSTS_PER_PAGE * page) : []
+  }, [POSTS_PER_PAGE, page, posts])
+
+  const handleGetMore = useCallback(() => {
+    if (!hasMore) return
+    updatePage(current => current + 1)
+  }, [hasMore])
+
   const scrollTrigger = useCallback(
     throttle(() => {
-      const scrollS = window.scrollY + window.outerHeight
-      const clientHeight = targetRef
-        ? targetRef.current
-          ? targetRef.current.clientHeight
-          : 0
-        : 0
-      if (scrollS > clientHeight + 100) {
+      const viewportBottom = window.scrollY + window.innerHeight
+      const targetHeight = targetRef.current?.offsetHeight || 0
+      if (viewportBottom > targetHeight + 120) {
         handleGetMore()
       }
-    }, 500)
+    }, 500),
+    [handleGetMore]
   )
 
   useEffect(() => {
     window.addEventListener('scroll', scrollTrigger)
-
     return () => {
       window.removeEventListener('scroll', scrollTrigger)
+      scrollTrigger.cancel?.()
     }
-  })
+  }, [scrollTrigger])
 
   return (
-    <div id='posts-wrapper' className='w-full md:pr-8 mb-12' ref={targetRef}>
+    <div id='posts-wrapper' className='mb-12 w-full' ref={targetRef}>
       {postsToShow.map(p => (
         <BlogItem key={p.id} post={p} />
       ))}
 
-      <div
-        onClick={handleGetMore}
-        className='w-full my-4 py-4 text-center cursor-pointer '>
-        {' '}
-        {hasMore ? locale.COMMON.MORE : `${locale.COMMON.NO_MORE} 😰`}{' '}
+      <div className='mt-8 flex justify-center'>
+        <button
+          type='button'
+          onClick={handleGetMore}
+          className={`inline-flex min-w-[220px] items-center justify-center rounded-full border px-6 py-3 text-sm font-semibold transition duration-300 ${
+            hasMore
+              ? 'border-[var(--ybot-accent)] bg-[var(--ybot-accent)] text-white hover:-translate-y-0.5 hover:bg-[var(--ybot-accent-strong)]'
+              : 'cursor-default border-black/8 bg-white/60 text-[var(--ybot-muted)] dark:border-white/10 dark:bg-white/6 dark:text-white/45'
+          }`}>
+          {hasMore ? locale?.COMMON?.MORE || 'Load more' : `${locale?.COMMON?.NO_MORE || 'No more'} · 已经到底了`}
+        </button>
       </div>
     </div>
   )

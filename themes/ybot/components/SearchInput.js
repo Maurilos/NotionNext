@@ -1,86 +1,121 @@
 import { useRouter } from 'next/router'
 import { useImperativeHandle, useRef, useState } from 'react'
+import { useGlobal } from '@/lib/global'
 let lock = false
 
-const SearchInput = ({ keyword, cRef, className }) => {
+const SearchInput = ({ keyword, cRef, className = '' }) => {
   const [onLoading, setLoadingState] = useState(false)
+  const [showClean, setShowClean] = useState(Boolean(keyword))
   const router = useRouter()
+  const { locale } = useGlobal()
   const searchInputRef = useRef()
-  useImperativeHandle(cRef, () => {
-    return {
-      focus: () => {
-        searchInputRef?.current?.focus()
-      }
+
+  useImperativeHandle(cRef, () => ({
+    focus: () => {
+      searchInputRef?.current?.focus()
     }
-  })
+  }))
 
-  const handleSearch = () => {
-    const key = searchInputRef.current.value
+  const handleSearch = async () => {
+    const key = searchInputRef.current?.value?.trim()
 
-    if (key && key !== '') {
+    if (key) {
       setLoadingState(true)
-      location.href = '/search/' + key
+      await router.push(`/search/${encodeURIComponent(key)}`)
+      setLoadingState(false)
     } else {
-      router.push({ pathname: '/' }).then(r => {
-      })
+      await router.push('/')
     }
   }
-  const handleKeyUp = (e) => {
-    if (e.keyCode === 13) { // 回车
-      handleSearch(searchInputRef.current.value)
-    } else if (e.keyCode === 27) { // ESC
+
+  const handleKeyUp = e => {
+    if (e.keyCode === 13) {
+      handleSearch()
+    } else if (e.keyCode === 27) {
       cleanSearch()
     }
   }
+
   const cleanSearch = () => {
-    searchInputRef.current.value = ''
+    if (searchInputRef.current) {
+      searchInputRef.current.value = ''
+    }
+    setShowClean(false)
   }
 
-  const [showClean, setShowClean] = useState(false)
-  const updateSearchKey = (val) => {
+  const updateSearchKey = val => {
     if (lock) {
       return
     }
-    searchInputRef.current.value = val
-
-    if (val) {
-      setShowClean(true)
-    } else {
-      setShowClean(false)
+    if (searchInputRef.current) {
+      searchInputRef.current.value = val
     }
+    setShowClean(Boolean(val))
   }
-  function lockSearchInput() {
+
+  const lockSearchInput = () => {
     lock = true
   }
 
-  function unLockSearchInput() {
+  const unLockSearchInput = () => {
     lock = false
   }
 
-  return <div className={'flex w-full bg-gray-100 ' + className}>
-        <input
-            ref={searchInputRef}
-            type='text'
-            className={'outline-none w-full text-sm pl-2 transition focus:shadow-lg font-light leading-10 text-black bg-gray-100 dark:bg-gray-900 dark:text-white'}
-            onKeyUp={handleKeyUp}
-            onCompositionStart={lockSearchInput}
-            onCompositionUpdate={lockSearchInput}
-            onCompositionEnd={unLockSearchInput}
-            onChange={e => updateSearchKey(e.target.value)}
-            defaultValue={keyword}
-        />
+  const placeholder =
+    locale?.NAV?.SEARCH || locale?.COMMON?.SEARCH || 'Search posts, notes, and pages'
 
-        <div className='-ml-8 cursor-pointer float-right items-center justify-center py-2'
-            onClick={handleSearch}>
-            <i className={`hover:text-black transform duration-200 text-gray-500  dark:hover:text-gray-300 cursor-pointer fas ${onLoading ? 'fa-spinner animate-spin' : 'fa-search'} `} />
+  return (
+    <section className={`mb-8 ${className}`}>
+      <div className='ybot-surface rounded-[28px] p-5 md:p-7'>
+        <div className='flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between'>
+          <div className='max-w-2xl'>
+            <p className='text-xs font-semibold uppercase tracking-[0.28em] text-[var(--ybot-muted)] dark:text-white/45'>
+              Search Layer
+            </p>
+            <h2 className='ybot-display mt-3 text-3xl tracking-[-0.04em] text-[var(--ybot-foreground)] dark:text-white md:text-4xl'>
+              搜索站内内容
+            </h2>
+            <p className='mt-3 text-sm leading-7 text-[var(--ybot-muted)] dark:text-white/68 md:text-base'>
+              用关键词快速定位文章、页面和索引内容，让搜索页也保持和首页同一套视觉秩序。
+            </p>
+          </div>
+
+          <div className='flex w-full max-w-2xl items-center gap-3 rounded-[22px] border border-black/10 bg-white/70 px-4 py-3 shadow-[0_12px_34px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/6'>
+            <span className='flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/8 bg-black/[0.03] text-[var(--ybot-muted)] dark:border-white/10 dark:bg-white/6 dark:text-white/60'>
+              <i className={`fas ${onLoading ? 'fa-spinner animate-spin' : 'fa-search'}`} />
+            </span>
+            <input
+              ref={searchInputRef}
+              type='text'
+              className='h-11 w-full bg-transparent text-sm font-normal text-[var(--ybot-foreground)] outline-none placeholder:text-[var(--ybot-muted)]/80 dark:text-white dark:placeholder:text-white/40 md:text-base'
+              onKeyUp={handleKeyUp}
+              onCompositionStart={lockSearchInput}
+              onCompositionUpdate={lockSearchInput}
+              onCompositionEnd={unLockSearchInput}
+              onChange={e => updateSearchKey(e.target.value)}
+              defaultValue={keyword}
+              placeholder={placeholder}
+            />
+            {showClean ? (
+              <button
+                type='button'
+                aria-label='Clear search'
+                onClick={cleanSearch}
+                className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/8 text-[var(--ybot-muted)] transition hover:border-[var(--ybot-accent)] hover:text-[var(--ybot-accent-strong)] dark:border-white/10 dark:text-white/55'>
+                <i className='fas fa-times' />
+              </button>
+            ) : null}
+            <button
+              type='button'
+              onClick={handleSearch}
+              className='inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-[var(--ybot-accent)] bg-[var(--ybot-accent)] px-5 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--ybot-accent-strong)]'>
+              搜索
+            </button>
+          </div>
         </div>
-
-        {(showClean &&
-            <div className='-ml-12 cursor-pointer float-right items-center justify-center py-2'>
-                <i className='fas fa-times hover:text-black transform duration-200 text-gray-400 cursor-pointer   dark:hover:text-gray-300' onClick={cleanSearch} />
-            </div>
-        )}
-    </div>
+      </div>
+    </section>
+  )
 }
 
 export default SearchInput

@@ -10,6 +10,7 @@ import BlogItem from './components/BlogItem'
 import BlogListPage from './components/BlogListPage'
 import BlogListScroll from './components/BlogListScroll'
 import BlogPostBar from './components/BlogPostBar'
+import Catalog from './components/Catalog'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import NavBar from './components/NavBar'
@@ -456,29 +457,39 @@ function LayoutSlug(props) {
   const { post, lock, validPassword, prev, next, recommendPosts } = props
 
   return (
-    <div className='mx-auto w-full max-w-[1320px] px-6 py-10 md:px-10 md:py-14'>
+    <div className='mx-auto w-full max-w-[1380px] px-6 py-10 md:px-10 md:py-14'>
       {lock && <ArticleLock validPassword={validPassword} />}
 
       {!lock && post && (
-        <div className='ybot-surface rounded-[32px] p-8 md:p-10 lg:p-12'>
-          <ArticleInfo post={post} />
+        <div className='grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start'>
+          <div className='ybot-surface rounded-[32px] p-8 md:p-10 lg:p-12'>
+            <ArticleInfo post={post} />
 
-          <div className='ybot-prose' id='article-wrapper'>
-            <NotionPage post={post} />
+            <div className='xl:hidden'>
+              <Catalog post={post} compact />
+            </div>
+
+            <div className='ybot-prose' id='article-wrapper'>
+              <NotionPage post={post} />
+            </div>
+
+            <div className='mt-10'>
+              <ShareBar post={post} />
+            </div>
+
+            {post?.type === 'Post' && (
+              <>
+                <ArticleAround prev={prev} next={next} />
+                <RecommendPosts recommendPosts={recommendPosts} />
+              </>
+            )}
+
+            <Comment frontMatter={post} />
           </div>
 
-          <div className='mt-10'>
-            <ShareBar post={post} />
-          </div>
-
-          {post?.type === 'Post' && (
-            <>
-              <ArticleAround prev={prev} next={next} />
-              <RecommendPosts recommendPosts={recommendPosts} />
-            </>
-          )}
-
-          <Comment frontMatter={post} />
+          <aside className='hidden xl:block xl:sticky xl:top-28'>
+            <Catalog post={post} />
+          </aside>
         </div>
       )}
     </div>

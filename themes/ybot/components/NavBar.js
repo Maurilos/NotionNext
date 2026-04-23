@@ -16,26 +16,10 @@ function isActive(currentPath, href) {
 function buildLinks({ customNav = [], customMenu = [] }) {
   const defaultLinks = [
     { name: '首页', href: '/', show: true },
-    {
-      name: '归档',
-      href: '/archive',
-      show: siteConfig('SIMPLE_MENU_ARCHIVE', null, CONFIG)
-    },
-    {
-      name: '分类',
-      href: '/category',
-      show: siteConfig('SIMPLE_MENU_CATEGORY', null, CONFIG)
-    },
-    {
-      name: '标签',
-      href: '/tag',
-      show: siteConfig('SIMPLE_MENU_TAG', null, CONFIG)
-    },
-    {
-      name: '搜索',
-      href: '/search',
-      show: siteConfig('SIMPLE_MENU_SEARCH', null, CONFIG)
-    }
+    { name: '归档', href: '/archive', show: siteConfig('SIMPLE_MENU_ARCHIVE', null, CONFIG) },
+    { name: '分类', href: '/category', show: siteConfig('SIMPLE_MENU_CATEGORY', null, CONFIG) },
+    { name: '标签', href: '/tag', show: siteConfig('SIMPLE_MENU_TAG', null, CONFIG) },
+    { name: '搜索', href: '/search', show: siteConfig('SIMPLE_MENU_SEARCH', null, CONFIG) }
   ]
 
   let links = defaultLinks.concat(customNav || [])
@@ -63,9 +47,9 @@ export default function NavBar(props) {
   }
 
   return (
-    <nav className='sticky top-0 z-40 border-b border-black/5 bg-[rgba(245,240,232,0.7)] py-4 backdrop-blur-xl dark:border-white/10 dark:bg-[rgba(9,13,23,0.72)]'>
-      <div className='mx-auto flex w-full max-w-[1320px] px-6 md:px-10'>
-        <div className='flex w-full flex-wrap items-center gap-2 rounded-full border border-black/8 bg-white/80 p-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.05)] backdrop-blur dark:border-white/10 dark:bg-white/10'>
+    <nav className='sticky top-0 z-40 border-b border-black/5 bg-[rgba(245,240,232,0.7)] py-3 backdrop-blur-xl dark:border-white/10 dark:bg-[rgba(9,13,23,0.72)] md:py-4'>
+      <div className='mx-auto flex w-full max-w-[1320px] px-5 md:px-10'>
+        <div className='ybot-scrollbar-hidden flex w-full items-center gap-2 overflow-x-auto rounded-[24px] border border-black/8 bg-white/80 p-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.05)] backdrop-blur dark:border-white/10 dark:bg-white/10'>
           {links.map(link => {
             const active = isActive(currentPath, link.href)
             return (
@@ -74,7 +58,7 @@ export default function NavBar(props) {
                 href={link.href}
                 target={link.target}
                 aria-current={active ? 'page' : undefined}
-                className='ybot-nav-link inline-flex min-w-[5.5rem] items-center justify-center rounded-full px-5 py-3 text-[15px] font-semibold tracking-[-0.02em] text-[var(--ybot-foreground)]/90 transition duration-200 hover:bg-black/[0.04] dark:text-white/80 dark:hover:bg-white/10'>
+                className='ybot-nav-link inline-flex min-w-[5.1rem] shrink-0 items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold tracking-[-0.02em] text-[var(--ybot-foreground)]/90 transition duration-200 hover:bg-black/[0.04] dark:text-white/80 dark:hover:bg-white/10 md:min-w-[5.5rem] md:px-5 md:py-3 md:text-[15px]'>
                 {link.name}
               </SmartLink>
             )
